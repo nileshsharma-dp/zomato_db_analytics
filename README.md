@@ -13,7 +13,7 @@ This project is an end-to-end data analysis case study focused on Zomato-like fo
 ## Project Steps
 
 ### 1. Set Up the Environment
-- **Tools Used**: PostgreSQL (or MySQL), VS Code, DB Browser (or pgAdmin), Git
+- **Tools Used**: MySQL, VS Code, MS Excel, Git
 - **Goal**: Establish a workspace and SQL environment to build and test relational queries.
 
 ### 2. Review the Database Schema
@@ -67,6 +67,16 @@ LIMIT 5;
 
 ---
 
+## Tech Stack
+| Component | Technology |
+|-----------|------------|
+| **Database** | MySQL 8.0+ |
+| **GUI Tool** | MySQL Workbench |
+| **Version Control** | Git |
+| **Data Formats** | CSV, SQL |
+
+---
+
 ## Requirements
 
 - **SQL Engine**: PostgreSQL or MySQL
@@ -93,6 +103,7 @@ LIMIT 5;
 ![ERD Diagram](https://github.com/nileshsharma-dp/zomato_db_analytics/blob/main/Images/ERD_Diagram.png)
 
 ---
+
 ## Project Structure
 
 ```plaintext
@@ -130,12 +141,12 @@ LIMIT 5;
 
 ---
 
-## Future Enhancements
-
-- Add stored procedures for repetitive analytics.
-- Automate reporting with Python scripts.
-- Connect to BI tools for interactive dashboards.
-- Expand the schema to include delivery partners and payment logs.
+## Key Features
+- **Relational Database Modeling** with proper normalization
+- **20+ Analytical Queries** covering various business aspects
+- **Query Optimization** with indexing strategies
+- **ER Diagram** for visual schema representation
+- **Sample Dataset** for hands-on practice
 
 ---
 
