@@ -96,30 +96,27 @@ LIMIT 5;
 ## Project Structure
 
 ```plaintext
-📦 root
+📦 Zomato_Project
 ├── 📂 Documents
-│    ├── README.md
-│    └── sql_queries.md
-│
+│   ├── 📘 README.md (Project Overview)
+│   └── 📒 sql_queries.md (All SQL Commands)
 ├── 📂 assets
 │   └── 📂 Images
-│       ├── zomato_main_1.png
-│       ├── zomato_main_2.png
-│       ├── zomato_main_3.jpg
-│       ├── ERD_Diagram.png
-│       ├── Logo.svg
-│       └── Symbol.svg
-│
-├── 📂 data
-│   ├── orders.csv
-│   ├── customers.csv
-│   ├── restaurants.csv
-│   ├── deliveries.csv
-│   └── riders.csv
-│
-└── 📂 sql
-    ├── zomato_tables.sql
-    └── zomato_eda.sql
+│       ├── 🖼️ zomato_main_1.png (readme main page)
+│       ├── 🖼️ zomato_main_2.png (queries main page)
+│       ├── 🖼️ zomato_main_3.jpg (UI Screenshot)
+│       ├── 📊 ERD_Diagram.png (Database Schema)
+│       ├── 🔷 Logo.svg (Branding)
+│       └── 🔶 Symbol.svg (Favicon)
+├── 📂 sql
+│   ├── 📝 zomato_tables.sql (Table Definitions)
+│   └── 📝 zomato_eda.sql (Analysis Queries)
+└── 📂 data
+    ├── 📄 orders.csv (Order Records)
+    ├── 📄 customers.csv (User Data)
+    ├── 📄 restaurants.csv (Vendor Info)
+    ├── 📄 deliveries.csv (Logistics)
+    └── 📄 riders.csv (Delivery Partners)
 ```
 
 ---
