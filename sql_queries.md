@@ -10,8 +10,8 @@ WITH dish_order_counts AS (
   SELECT
     c.customer_id,
     c.customer_name,
-    o.order_item       AS dish,
-    COUNT(*)           AS total_orders,
+    o.order_item AS dish,
+    COUNT(*) AS total_orders,
     DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) AS dish_rank
   FROM orders o
   JOIN customers c
