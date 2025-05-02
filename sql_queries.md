@@ -1,8 +1,5 @@
 # Analysis & Reports
 
-**Project Overview:**  
-The Zomato SQL Project is designed to analyze customer behavior, order patterns, and the impact of the Zomato Gold membership program. It involves creating and populating several tables to simulate real-world scenarios.
-
 ## Q1. Top 5 Most Frequently Ordered Dishes by “Arjun Mehta” in the Last Year
 
 **Description:**  
