@@ -102,9 +102,9 @@ LIMIT 5;
 │   └── 📒 sql_queries.md (All SQL Commands)
 ├── 📂 assets
 │   └── 📂 Images
-│       ├── 🖼️ zomato_main_1.png (readme main page)
-│       ├── 🖼️ zomato_main_2.png (queries main page)
-│       ├── 🖼️ zomato_main_3.jpg (UI Screenshot)
+│       ├── 🖼️ zomato_main_1.png (cover page)
+│       ├── 🖼️ zomato_main_2.png (cover page)
+│       ├── 🖼️ zomato_main_3.jpg (cover page)
 │       ├── 📊 ERD_Diagram.png (Database Schema)
 │       ├── 🔷 Logo.svg (Branding)
 │       └── 🔶 Symbol.svg (Favicon)
