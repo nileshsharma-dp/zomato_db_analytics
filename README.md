@@ -1,10 +1,11 @@
-
 # Zomato SQL Data Analysis: End-to-End Relational Database Project
+---
+
+
+![](https://github.com/nileshsharma-dp/zomato_db_analytics/blob/main/Images/zomato_main_3.jpg)
+
 
 ## Project Overview
-
-![ERD Diagram](./assets/zomato_erd_diagram.svg)
-
 This project is an end-to-end data analysis case study focused on Zomato-like food delivery operations using SQL. The objective is to model, populate, and query a relational database to derive insights about restaurants, users, orders, and reviews. It’s perfect for aspiring data analysts or database engineers looking to deepen their SQL, data modeling, and business intelligence skills.
 
 ---
@@ -86,6 +87,11 @@ LIMIT 5;
 
 ---
 
+### ERD Diagram
+
+![ERD Diagram](./assets/zomato_erd_diagram.svg)
+
+---
 ## Project Structure
 
 ```plaintext
