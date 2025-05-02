@@ -89,7 +89,7 @@ LIMIT 5;
 
 ### ERD Diagram
 
-![ERD Diagram](./assets/zomato_erd_diagram.svg)
+![ERD Diagram](https://github.com/nileshsharma-dp/zomato_db_analytics/blob/main/Images/ERD_Diagram.png)
 
 ---
 ## Project Structure
