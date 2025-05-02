@@ -1,5 +1,11 @@
 # Analysis & Reports
+----
 
+<p align="center">
+  <img src="https://github.com/nileshsharma-dp/zomato_db_analytics/blob/main/Images/zomato_main_2.png" width="100%" alt="Zomato Main">
+</p>
+
+----
 ## Q1. Top 5 Most Frequently Ordered Dishes by “Arjun Mehta” in the Last Year
 
 **Description:**  
