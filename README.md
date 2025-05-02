@@ -79,11 +79,12 @@ LIMIT 5;
 
 1. Clone this repository:
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/nileshsharma-dp/zomato_db_analytics.git
+
    ```
 2. Open the SQL scripts from the `sql/` folder in your SQL IDE.
 3. Run the schema creation script followed by the data population script.
-4. Execute the analysis queries from `analysis_queries.sql`.
+4. Execute the analysis queries from `zomato_eda.sql`.
 
 ---
 
@@ -95,13 +96,30 @@ LIMIT 5;
 ## Project Structure
 
 ```plaintext
-|-- assets/                   # ERD diagram and any visual assets
-|-- data/                     # Sample CSV data for population
-|-- sql/
-|   |-- create_schema.sql     # DDL for tables
-|   |-- insert_data.sql       # Data population
-|   |-- analysis_queries.sql  # Business SQL queries
-|-- README.md                 # Project documentation
+📦 root
+├── 📂 Documents
+│    ├── README.md
+│    └── sql_queries.md
+│
+├── 📂 assets
+│   └── 📂 Images
+│       ├── zomato_main_1.png
+│       ├── zomato_main_2.png
+│       ├── zomato_main_3.jpg
+│       ├── ERD_Diagram.png
+│       ├── Logo.svg
+│       └── Symbol.svg
+│
+├── 📂 data
+│   ├── orders.csv
+│   ├── customers.csv
+│   ├── restaurants.csv
+│   ├── deliveries.csv
+│   └── riders.csv
+│
+└── 📂 sql
+    ├── zomato_tables.sql
+    └── zomato_eda.sql
 ```
 
 ---
