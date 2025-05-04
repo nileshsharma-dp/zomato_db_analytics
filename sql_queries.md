@@ -207,31 +207,10 @@ SELECT *
 FROM ranking_table 
 WHERE ranks = 1;
 ```
-## Q9. Customer Churn
+## Q9. Yearly Customer Churn 
 
 **Description:**  
-- Identify customers who didn’t place an order in the first quarter but did in the last quarter.
 - Find customers who placed orders in 2023 but not in 2024.
-- Identify customers active in 2023-24 but inactive in 2024-25.
-```sql
--- Customers who ordered in Q4 but not Q1
-WITH order_quarters AS (
-	SELECT DISTINCT customer_id, 
-		CASE 
-			WHEN MONTH(order_date) BETWEEN 1 AND 3 THEN 'Q1'
-			WHEN MONTH(order_date) BETWEEN 4 AND 6 THEN 'Q2'
-			WHEN MONTH(order_date) BETWEEN 7 AND 9 THEN 'Q3'
-			WHEN MONTH(order_date) BETWEEN 10 AND 12 THEN 'Q4'
-		ELSE NULL END AS quarter
-	FROM orders
-)
-SELECT c.customer_id, c.customer_name 
-FROM customers c
-LEFT JOIN (SELECT customer_id FROM order_quarters WHERE quarter = 'Q1') q1_orders 
-	ON c.customer_id = q1_orders.customer_id 
-JOIN (SELECT customer_id FROM order_quarters WHERE quarter = 'Q4') q4_orders 
-	ON c.customer_id = q4_orders.customer_id;
-```
 ```sql
 -- Customers who ordered in 2023 but not 2024
 SELECT DISTINCT customer_id 
@@ -243,6 +222,11 @@ WHERE EXTRACT(YEAR FROM order_date) = 2023 AND customer_id IS NOT NULL
 		WHERE EXTRACT(YEAR FROM order_date) = 2024 AND customer_id IS NOT NULL
 	);
 ```
+## Q10. Financial Yearly Customer Churn
+
+**Description:**  
+- Identify customers active in Financial Year 2023-24 but inactive in Financial Year 2024-25.
+
 ```sql
 -- Customers active in 2023-24 but inactive in 2024-25
 SELECT DISTINCT customer_id 
@@ -254,7 +238,8 @@ WHERE order_date BETWEEN '2023-04-01' AND '2024-03-31'
 		WHERE order_date BETWEEN '2024-04-01' AND '2025-03-31'
 	);
 ```
-## Q10. Cancellation Rate Comparison
+
+## Q11. Cancellation Rate Comparison
 
 **Description:**  
 Compare each restaurant’s cancellation rate over three consecutive years and categorize the churn trend.
@@ -313,31 +298,10 @@ FROM cancelation_2023 l
 JOIN cancelation_2024 c ON l.restaurant_id = c.restaurant_id 
 JOIN cancelation_2025 r ON c.restaurant_id = r.restaurant_id;
 ```
-## Q11. Rider Average Delivery Time
+## Q12. Rider Average Delivery Time
 
 **Description:**  
 Determine each rider’s average delivery time in minutes for completed deliveries.
-```sql
-SELECT 
-    o.order_id,
-    o.order_time,
-    d.delivery_time,
-    TIME_FORMAT(
-        IF(d.delivery_time < o.order_time, 
-            TIMEDIFF(ADDTIME(d.delivery_time, '24:00:00'), o.order_time), 
-            TIMEDIFF(d.delivery_time, o.order_time)
-        ), '%H:%i:%s') AS time_diff,
-    TIME_TO_SEC(
-        IF(d.delivery_time < o.order_time, 
-            TIMEDIFF(ADDTIME(d.delivery_time, '24:00:00'), o.order_time), 
-            TIMEDIFF(d.delivery_time, o.order_time)
-        )
-    ) / 60 AS time_diff_minutes 
-FROM orders o 
-JOIN deliveries d ON o.order_id = d.order_id 
-JOIN riders r ON d.rider_id = r.rider_id
-WHERE d.delivery_status = 'Delivered';
-```
 ```sql 
 SELECT 
     r.rider_name, 
@@ -356,7 +320,7 @@ WHERE o.order_status = 'Completed'
 GROUP BY r.rider_id
 ORDER BY average_delivery_minutes;
 ```
-## Q12. Monthly Restaurant Growth Ratio
+## Q13. Monthly Restaurant Growth Ratio
 
 **Description:**  
 Calculate each restaurant’s **month-over-month growth ratio** based on completed orders.
@@ -379,7 +343,7 @@ SELECT
 FROM monthly_orders 
 ORDER BY month_year;
 ```
-## Q13. Customer Segmentation
+## Q14. Customer Segmentation
 
 **Description:**  
 Segment customers into **Gold** or **Silver** based on whether their monthly spending is above or below the **average order value (AOV)**.
@@ -403,7 +367,7 @@ FROM (
 ) AS t1 
 GROUP BY cx_category;
 ```
-## Q14. Rider Monthly Earning
+## Q15. Rider Monthly Earning
 
 **Description:**  
 Calculate each **rider’s monthly earnings**, assuming they earn **8%** of the order value.
@@ -420,7 +384,7 @@ WHERE d.rider_id <> 0
 GROUP BY d.rider_id, month_year
 ORDER BY d.rider_id, month_year;
 ```
-## Q15. Rider Rating Analysis
+## Q16. Rider Rating Analysis
 
 **Description:**  
 Assign star ratings to riders based on delivery time:
@@ -452,7 +416,7 @@ FROM (
 GROUP BY rider_id, rating 
 ORDER BY rider_id, total_stars DESC;
 ```
-## Q16. Order Frequency by Day  
+## Q17. Order Frequency by Day  
 
 **Description:**  
 Determine the **peak ordering day** for each restaurant based on order frequency.
@@ -469,7 +433,7 @@ SELECT * FROM
     ) as t1 
 WHERE ranking = 1;
 ```
-## Q17. Customer Lifetime Value (CLV)
+## Q18. Customer Lifetime Value (CLV)
 
 **Description:**  
 Calculate the **total revenue generated** by **each customer** 
@@ -485,7 +449,7 @@ JOIN customers c ON c.customer_id = o.customer_id
 GROUP BY o.customer_id
 ORDER BY 1;
 ```
-## Q18. Monthly Sales Trend
+## Q19. Monthly Sales Trend
 **Description:**  
 Identify the **monthly sales trend** by comparing each month's total sales to the previous month.
 ```sql
@@ -501,7 +465,7 @@ FROM orders
 WHERE order_status = 'Completed'
 GROUP BY 1;
 ```
-## Q19. Rider Efficiency
+## Q20. Rider Efficiency
 **Description:**  
 Evaluate rider efficiency by comparing **average delivery time** across all riders.
 ```sql
@@ -518,7 +482,7 @@ FROM (
 	GROUP BY 1
 ) AS t1;
 ```
-## Q20. Order Item Popularity
+## Q21. Order Item Popularity
 **Description:**  
 Track popularity of order items across seasons and identify seasonal demand spikes.
 ```sql
@@ -538,7 +502,7 @@ FROM (
 GROUP BY 1, 2
 ORDER BY 1, 3 DESC;
 ```
-## Q21. City Revenue Ranking (2023)
+## Q22. City Revenue Ranking (2023)
 **Description:**  
 Rank each city based on the **total revenue** generated in the year **2023**.
 ```sql
