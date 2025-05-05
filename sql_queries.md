@@ -484,23 +484,31 @@ FROM (
 ```
 ## Q21. Order Item Popularity
 **Description:**  
-Track popularity of order items across seasons and identify seasonal demand spikes.
+Identify the top 3 most ordered items by season to spot seasonal demand trends.
 ```sql
-SELECT order_item, season, COUNT(order_id) AS total_orders 
+SELECT order_item, season, total_orders 
 FROM (
-	SELECT *, 
-		MONTH(order_date) AS month,
-		CASE
-			WHEN MONTH(order_date) BETWEEN 3 AND 5 THEN 'Spring'
-			WHEN MONTH(order_date) BETWEEN 6 AND 8 THEN 'Summer'
-			WHEN MONTH(order_date) BETWEEN 9 AND 11 THEN 'Autumn'
-			ELSE 'Winter' 
-		END AS season
-	FROM orders
-	WHERE order_status = 'Completed'
-) AS t1 
-GROUP BY 1, 2
-ORDER BY 1, 3 DESC;
+	SELECT 
+	  order_item, 
+	  season, 
+	  COUNT(order_id) AS total_orders,
+	  RANK() OVER(PARTITION BY season ORDER BY COUNT(order_id) DESC) AS item_rank
+	FROM (
+		SELECT 
+		  order_item,
+		  order_id,
+		  CASE
+			WHEN MONTH(order_date) BETWEEN 3 AND 6 THEN 'Summer'
+			WHEN MONTH(order_date) BETWEEN 7 AND 10 THEN 'Monsoon'
+			ELSE 'Winter'
+		  END AS season
+		FROM orders
+		WHERE order_status = 'Completed'
+	) AS t1
+	GROUP BY order_item, season
+	ORDER BY season, total_orders DESC
+) AS t2 
+WHERE item_rank <= 3;
 ```
 ## Q22. City Revenue Ranking (2023)
 **Description:**  
