@@ -83,11 +83,10 @@ FROM ordered_counts
 WHERE ranks <= 5 
 ORDER BY ranks;
 
-    
 -- Q.2
 -- Write a query to find the orders in each month by customer called "Arjun Mehra"
 
-SELECT c.customer_id, c.customer_name, DATE_FORMAT(o.order_date, '%m') AS months , count(*) as total_orders
+SELECT c.customer_name, DATE_FORMAT(o.order_date, '%m') AS months , count(*) as total_orders
 FROM orders o join customers c on o.customer_id = c.customer_id 
 Where c.customer_name = 'Arjun Mehta' AND
 o.order_date >= DATE_SUB('2024-03-31', INTERVAL 1 YEAR)
@@ -100,21 +99,21 @@ ORDER BY months;
 --  Approch 1
 
 SELECT 
-CASE 
-WHEN EXTRACT(HOUR FROM order_time) BETWEEN 0 AND 1 THEN "00:00 - 02:00"
-WHEN EXTRACT(HOUR FROM order_time) BETWEEN 2 AND 3 THEN "02:00 - 04:00"
-WHEN EXTRACT(HOUR FROM order_time) BETWEEN 4 AND 5 THEN "04:00 - 06:00"
-WHEN EXTRACT(HOUR FROM order_time) BETWEEN 6 AND 7 THEN "06:00 - 08:00"
-WHEN EXTRACT(HOUR FROM order_time) BETWEEN 8 AND 9 THEN "08:00 - 10:00"
-WHEN EXTRACT(HOUR FROM order_time) BETWEEN 10 AND 11 THEN "10:00 - 12:00"
-WHEN EXTRACT(HOUR FROM order_time) BETWEEN 12 AND 13 THEN "12:00 - 14:00"
-WHEN EXTRACT(HOUR FROM order_time) BETWEEN 14 AND 15 THEN "14:00 - 16:00"
-WHEN EXTRACT(HOUR FROM order_time) BETWEEN 16 AND 17 THEN "16:00 - 18:00"
-WHEN EXTRACT(HOUR FROM order_time) BETWEEN 18 AND 19 THEN "18:00 - 20:00"
-WHEN EXTRACT(HOUR FROM order_time) BETWEEN 20 AND 21 THEN "20:00 - 22:00"
-WHEN EXTRACT(HOUR FROM order_time) BETWEEN 22 AND 23 THEN "22:00 - 24:00"
-END as time_slot,
-count(*) as total_order 
+	CASE 
+		WHEN EXTRACT(HOUR FROM order_time) BETWEEN 0 AND 1 THEN "00:00 - 02:00"
+		WHEN EXTRACT(HOUR FROM order_time) BETWEEN 2 AND 3 THEN "02:00 - 04:00"
+		WHEN EXTRACT(HOUR FROM order_time) BETWEEN 4 AND 5 THEN "04:00 - 06:00"
+		WHEN EXTRACT(HOUR FROM order_time) BETWEEN 6 AND 7 THEN "06:00 - 08:00"
+		WHEN EXTRACT(HOUR FROM order_time) BETWEEN 8 AND 9 THEN "08:00 - 10:00"
+		WHEN EXTRACT(HOUR FROM order_time) BETWEEN 10 AND 11 THEN "10:00 - 12:00"
+		WHEN EXTRACT(HOUR FROM order_time) BETWEEN 12 AND 13 THEN "12:00 - 14:00"
+		WHEN EXTRACT(HOUR FROM order_time) BETWEEN 14 AND 15 THEN "14:00 - 16:00"
+		WHEN EXTRACT(HOUR FROM order_time) BETWEEN 16 AND 17 THEN "16:00 - 18:00"
+		WHEN EXTRACT(HOUR FROM order_time) BETWEEN 18 AND 19 THEN "18:00 - 20:00"
+		WHEN EXTRACT(HOUR FROM order_time) BETWEEN 20 AND 21 THEN "20:00 - 22:00"
+		WHEN EXTRACT(HOUR FROM order_time) BETWEEN 22 AND 23 THEN "22:00 - 24:00"
+	END as time_slot,	
+	count(*) as total_order 
 from orders
 GROUP BY time_slot
 ORDER BY total_order DESC;
@@ -135,7 +134,8 @@ SELECT FLOOR(EXTRACT(HOUR FROM order_time) / 2) as time_slot , count(*) total_co
 
 SELECT c.customer_name, count(o.order_id) AS total_order, round(AVG(o.total_amount),0) AS avg_amount
 FROM orders o JOIN customers c ON o.customer_id = c.customer_id
-GROUP BY c.customer_name HAVING count(o.order_id) > 190 ORDER BY total_order DESC;
+GROUP BY c.customer_name 
+HAVING count(o.order_id) > 200 ORDER BY total_order DESC;
 
 -- Q.5
 -- Question : List the customers who have spent more than 55K in total on food orders.
@@ -143,7 +143,7 @@ GROUP BY c.customer_name HAVING count(o.order_id) > 190 ORDER BY total_order DES
 
 SELECT c.customer_name, count(o.order_id) AS total_order, round(sum(o.total_amount),0) AS total_spent
 FROM orders o JOIN customers c ON o.customer_id = c.customer_id
-GROUP BY c.customer_name  HAVING total_spent > 55000 ORDER BY total_spent DESC;
+GROUP BY c.customer_name  HAVING total_spent > 50000 ORDER BY total_spent DESC;
 
 -- Q.6 Orders without delivery
 -- QUESTION : Write a query to find orders that were placed but not delivered.
@@ -151,7 +151,7 @@ GROUP BY c.customer_name  HAVING total_spent > 55000 ORDER BY total_spent DESC;
 
 SELECT r.restaurant_name, r.city, count(*) not_deliver_orders 
 FROM restaurants r RIGHT JOIN orders o on r.restaurant_id = o.restaurant_id  LEFT JOIN deliveries d ON o.order_id = d.order_id
-WHERE d.delivery_status = 'Not Delivered' GROUP BY 1,2 ORDER BY not_deliver_orders DESC;
+WHERE d.delivery_status = 'Not Delivered' GROUP BY 1,2 ORDER BY 3 DESC;
 
 -- Q.7 Restaurant revenue ranking
 -- Question :  Rank restaurant by their total revenue from the last year, including there name, total revenue, and rank within there city.
@@ -177,35 +177,21 @@ WITH ranking_table AS
 )
 SELECT * FROM ranking_table WHERE ranks = 1;
 
--- Q.9 Customer churn
--- Find the customer who havent placed an order in first quarter but did in last quarter.
+-- Q.9 Customer churn 
 -- Find the customer who havent placed an order in 2024 but did in 2023.
-
-WITH order_quarters AS (
-	SELECT DISTINCT customer_id, 
-		CASE 
-			WHEN MONTH(order_date) BETWEEN 1 AND 3 THEN 'Q1'
-			WHEN MONTH(order_date) BETWEEN 4 AND 6 THEN 'Q2'
-			WHEN MONTH(order_date) BETWEEN 7 AND 9 THEN 'Q3'
-			WHEN MONTH(order_date) BETWEEN 10 AND 12 THEN 'Q4'
-		ELSE NULL END AS quarter
-	FROM orders)
-    SELECT c.customer_id,c.customer_name FROM customers c
-		LEFT JOIN ( SELECT customer_id FROM order_quarters WHERE quarter = 'Q1') q1_orders ON c.customer_id = q1_orders.customer_id 
-			JOIN ( SELECT customer_id FROM order_quarters WHERE quarter = 'Q4') q4_orders ON c.customer_id = q4_orders.customer_id;
 
 SELECT DISTINCT customer_id FROM orders
 	WHERE EXTRACT(YEAR FROM order_date) = 2023 AND customer_id IS NOT NULL 
 	AND customer_id NOT IN ( SELECT DISTINCT customer_id FROM orders WHERE EXTRACT(YEAR FROM order_date) = 2024 AND customer_id IS NOT NULL );
-
-SELECT DISTINCT customer_id FROM orders
+    
+-- Q.10 Financial Yearly Customer Churn
+-- Identify customers active in Financial Year 2023-24 but inactive in Financial Year 2024-25.
+ 
+ SELECT DISTINCT customer_id FROM orders
 	WHERE order_date BETWEEN '2023-04-01' AND '2024-03-31'
 		AND customer_id NOT IN (SELECT DISTINCT customer_id FROM orders WHERE order_date BETWEEN '2024-04-01' AND '2025-03-31');
-  
 
-
-  
--- Q.10 Cancellation Rate Comparision
+-- Q.11 Cancellation Rate Comparision
 -- Calculate and compare the order cancellation rate for each resaurant between the current year and the previous years and give churn trend.
 
 WITH cancelation_2023 as (
@@ -265,17 +251,16 @@ JOIN cancelation_2025 r on c.restaurant_id = r.restaurant_id;
 
 
 -- Extra
-Select EXTRACT(YEAR FROM order_date) as year, COUNT(DISTINCT customer_id) AS unique_customers FROM orders GROUP BY EXTRACT(YEAR FROM order_date);
+Select YEAR(order_date) as year, COUNT(DISTINCT customer_id) AS unique_customers FROM orders GROUP BY 1;
 
 SELECT 
   CASE WHEN MONTH(order_date) >= 4 THEN CONCAT(YEAR(order_date), '-', YEAR(order_date) + 1) ELSE CONCAT(YEAR(order_date) - 1, '-', YEAR(order_date)) END AS financial_year,
   COUNT(DISTINCT customer_id) AS unique_customers FROM orders GROUP BY financial_year;
   
 SELECT order_status, count(order_status) from orders GROUP BY order_status;
-
 SELECT delivery_status, count(delivery_status) from deliveries GROUP BY delivery_status;
   
--- Q.11 Rider Average Delivery Time
+-- Q.12 Rider Average Delivery Time
 -- Determine each riders average delivery time.
 
 SELECT 
@@ -294,7 +279,7 @@ WHERE o.order_status = 'Completed'
 GROUP BY r.rider_id
 ORDER BY 3;
 
--- Q.12 Monthly Restaurant Growth ratio
+-- Q.13 Monthly Restaurant Growth ratio
 -- Calculate each restaurants growth ratio based on the total number of delivered orders since its joining.
 
 WITH monthly_orders AS (
@@ -312,7 +297,7 @@ SELECT
 FROM monthly_orders 
 ORDER BY month_year; 
 
--- Q.13 Customer Segmentation
+-- Q.14 Customer Segmentation
 -- Segement Customer into 'Gold' or 'Silver' groups based on their total spending compared to the average order value (AOV). If a customers total spending exceeds the AOV,
 -- label them as 'Gold' otherwise , label them as 'Silver'. Write an SQL query to determine each segment's total number of orders and total revenue.
 
@@ -328,7 +313,7 @@ SELECT
 	ORDER BY 2) 
 AS t1 GROUP BY 1;
 
--- Q.14 Rider Monthly Earning
+-- Q.15 Rider Monthly Earning
 -- Calculate each riders total monthly earning, assuming they earn 8% of the order amount.
 
 SELECT 
@@ -343,7 +328,7 @@ WHERE d.rider_id <> 0 -- AND
 GROUP BY 1,2 
 ORDER BY 1,2 ;
 
--- Q.15 Rider Rating Aanalysis
+-- Q.16 Rider Rating Aanalysis
 -- Find the number of 5-Star, 4-Star and 3-Star ratings for each riders.
 -- riders recived this rating on the basis of delivery time.
 -- If Order are deliverd in less then 15 minutes of order recived time the rider get 5 star rating 
@@ -365,7 +350,7 @@ SELECT rider_id, rating, COUNT(*) as total_stars FROM
     GROUP BY 1, 2 
     ORDER BY 1, 3 DESC;
     
--- Q.16 Order frequency by Day
+-- Q.17 Order frequency by Day
 -- Analyze order frequency per day of the week and identify the peak day for each restaurant.
 
 SELECT * FROM 
@@ -380,7 +365,7 @@ SELECT * FROM
 	ORDER BY 1, 3 DESC
     ) as t1 where ranking = 1;
 
--- Q.17 Customer Lifetime Value (CLV)
+-- Q.18 Customer Lifetime Value (CLV)
 -- Calculate the total revenue generated by each costomer over all their orders.
 
 SELECT 
@@ -392,7 +377,7 @@ FROM orders o JOIN customers c on c.customer_id = o.customer_id
 GROUP BY o.customer_id
 ORDER BY 1;
 
--- Q.18 Monthly Sales Trend
+-- Q.19 Monthly Sales Trend
 -- Identify sales trend by comparing each months total sales to previous month.
 
 SELECT 
@@ -404,7 +389,7 @@ FROM orders
 WHERE order_status = 'Completed'
 GROUP BY 1;
 
--- Q.19 Rider Efficiency
+-- Q.20 Rider Efficiency
 -- Evaluate riders efficiency by determining average delivery time and identifying those with the lowest and highest averages.
 
 SELECT 
@@ -418,29 +403,121 @@ SELECT
 	GROUP BY 1
     ) as t1;
 
--- Q.20 Order Item Popularity 
+-- Q.21 Order Item Popularity 
 -- Track the popularity of specific order items over time and identify seasonal demand spikes.
+SELECT order_item, season, total_orders FROM(
+	SELECT 
+	  order_item, 
+	  season, 
+	  COUNT(order_id) AS total_orders,
+	  RANK() OVER(PARTITION BY season ORDER BY COUNT(order_id) DESC) AS item_rank
+	FROM (
+		SELECT 
+		  order_item,
+		  order_id,
+		  CASE
+			WHEN MONTH(order_date) BETWEEN 3 AND 6 THEN 'Summer'
+			WHEN MONTH(order_date) BETWEEN 7 AND 10 THEN 'Monsoon'
+			ELSE 'Winter'
+		  END AS season
+		FROM orders
+		WHERE order_status = 'Completed'
+	) AS t1
+	GROUP BY order_item, season
+	ORDER BY season, total_orders DESC) AS t2 
+    WHERE item_rank <= 3;
 
-SELECT order_item, season, COUNT(order_id) as total_orders FROM
-	(
-    SELECT *, 
-		MONTH(order_date) as month,
-		CASE
-			WHEN MONTH(order_date) BETWEEN 3 AND 5 THEN 'Spring'
-			WHEN MONTH(order_date) BETWEEN 6 AND 8 THEN 'Summer'
-			WHEN MONTH(order_date) BETWEEN 9 AND 11 THEN 'Autumn'
-			ELSE 'Winter' END AS season
-	FROM orders
-    WHERE order_status = 'Completed'
-    ) AS t1 
-    GROUP BY 1,2
-	ORDER BY 1,3 DESC;
     
--- Q.21 
+-- Q.22 
 -- Rank each city based on the total revenue for last year 2023
 
 SELECT r.city, ROUND(SUM(o.total_amount),0) total_revenue, RANK() OVER(ORDER BY SUM(o.total_amount) DESC) AS ranking
 FROM orders o JOIN restaurants r on o.restaurant_id = r.restaurant_id
-WHERE YEAR(o.order_date) = 2023 GROUP BY 1
+WHERE YEAR(o.order_date) = 2023 GROUP BY 1;
+
+-- Q.23 Quarterly Active Customers
+-- Count unique active customers each quarter.
+
+SELECT 
+    CONCAT(YEAR(order_date), '-Q', QUARTER(order_date)) AS quarter,
+    COUNT(DISTINCT customer_id) AS customer_count,
+    GROUP_CONCAT(DISTINCT customer_id ORDER BY customer_id SEPARATOR ', ') AS customer_ids
+FROM orders
+WHERE order_status = 'Completed'
+GROUP BY quarter
+ORDER BY quarter;
+
+-- Q24 Quarterly Customer Churn
+-- Identify customers who became inactive in the following quarter.
+
+-- Customers who did not return in the next quarter or returned after a long gap
+WITH customer_quarters AS (
+    SELECT 
+        customer_id,
+        CONCAT(YEAR(order_date), '-Q', QUARTER(order_date)) AS quarter
+    FROM orders
+    WHERE order_status = 'Completed'
+    GROUP BY customer_id, quarter
+),
+quarter_pairs AS (
+    SELECT 
+        q1.quarter AS current_quarter,
+        q2.quarter AS next_quarter,
+        q1.customer_id
+    FROM customer_quarters q1
+    LEFT JOIN customer_quarters q2 
+        ON q1.customer_id = q2.customer_id 
+       AND q2.quarter = (
+           SELECT MIN(quarter) 
+           FROM customer_quarters 
+           WHERE quarter > q1.quarter
+       )
+)
+SELECT 
+    current_quarter AS quarter,
+    COUNT(DISTINCT customer_id) AS churned_count,
+    GROUP_CONCAT(DISTINCT customer_id ORDER BY customer_id SEPARATOR ', ') AS churned_customer_ids
+FROM quarter_pairs
+WHERE next_quarter IS NULL 
+   OR DATEDIFF(
+        STR_TO_DATE(CONCAT(next_quarter, '-01'), '%Y-Q%q-%d'),
+        STR_TO_DATE(CONCAT(current_quarter, '-01'), '%Y-Q%q-%d')
+   ) > 90  -- More than one quarter gap
+GROUP BY current_quarter
+ORDER BY current_quarter;
+
+-- Q25 Yearly Customer Churn
+-- Find customers who stopped ordering for over a year or never returned.
+
+WITH customer_years AS (
+    SELECT 
+        customer_id,
+        YEAR(order_date) AS year
+    FROM orders
+    WHERE order_status = 'Completed'
+    GROUP BY customer_id, YEAR(order_date)
+),
+
+customer_year_pairs AS (
+    SELECT 
+        cy1.customer_id,
+        cy1.year AS last_active_year,
+        MIN(cy2.year) AS next_active_year
+    FROM customer_years cy1
+    LEFT JOIN customer_years cy2 
+        ON cy1.customer_id = cy2.customer_id 
+        AND cy2.year > cy1.year
+    GROUP BY cy1.customer_id, cy1.year
+)
+
+SELECT 
+    last_active_year + 1 AS churn_year,
+    COUNT(DISTINCT customer_id) AS churned_customers_count,
+    GROUP_CONCAT(DISTINCT customer_id ORDER BY customer_id SEPARATOR ', ') AS churned_customer_ids
+FROM customer_year_pairs
+WHERE next_active_year IS NULL 
+   OR next_active_year > last_active_year + 1
+GROUP BY last_active_year
+ORDER BY churn_year;
 
 -- END OF REPORTS --
