@@ -523,6 +523,93 @@ JOIN restaurants r ON o.restaurant_id = r.restaurant_id
 WHERE YEAR(o.order_date) = 2023 
 GROUP BY 1;
 ```
+## Q23. Quarterly Active Customers
+**Description:**  
+Count unique active customers each quarter.
+```sql
+SELECT 
+    CONCAT(YEAR(order_date), '-Q', QUARTER(order_date)) AS quarter,
+    COUNT(DISTINCT customer_id) AS customer_count,
+    GROUP_CONCAT(DISTINCT customer_id ORDER BY customer_id SEPARATOR ', ') AS customer_ids
+FROM orders
+WHERE order_status = 'Completed'
+GROUP BY quarter
+ORDER BY quarter;
+```
+## Q24. Quarterly Customer Churn
+**Description:**  
+Identify customers who became inactive in the following quarter.
+```sql
+WITH customer_quarters AS (
+    SELECT 
+        customer_id,
+        CONCAT(YEAR(order_date), '-Q', QUARTER(order_date)) AS quarter
+    FROM orders
+    WHERE order_status = 'Completed'
+    GROUP BY customer_id, quarter
+),
+quarter_pairs AS (
+    SELECT 
+        q1.quarter AS current_quarter,
+        q2.quarter AS next_quarter,
+        q1.customer_id
+    FROM customer_quarters q1
+    LEFT JOIN customer_quarters q2 
+        ON q1.customer_id = q2.customer_id 
+       AND q2.quarter = (
+           SELECT MIN(quarter) 
+           FROM customer_quarters 
+           WHERE quarter > q1.quarter
+       )
+)
+SELECT 
+    current_quarter AS quarter,
+    COUNT(DISTINCT customer_id) AS churned_count,
+    GROUP_CONCAT(DISTINCT customer_id ORDER BY customer_id SEPARATOR ', ') AS churned_customer_ids
+FROM quarter_pairs
+WHERE next_quarter IS NULL 
+   OR DATEDIFF(
+        STR_TO_DATE(CONCAT(next_quarter, '-01'), '%Y-Q%q-%d'),
+        STR_TO_DATE(CONCAT(current_quarter, '-01'), '%Y-Q%q-%d')
+   ) > 90  -- More than one quarter gap
+GROUP BY current_quarter
+ORDER BY current_quarter;
+```
+## Q25. Yearly Customer Churn
+**Description:**  
+Find customers who stopped ordering for over a year or never returned.
+```sql
+WITH customer_years AS (
+    SELECT 
+        customer_id,
+        YEAR(order_date) AS year
+    FROM orders
+    WHERE order_status = 'Completed'
+    GROUP BY customer_id, YEAR(order_date)
+),
+
+customer_year_pairs AS (
+    SELECT 
+        cy1.customer_id,
+        cy1.year AS last_active_year,
+        MIN(cy2.year) AS next_active_year
+    FROM customer_years cy1
+    LEFT JOIN customer_years cy2 
+        ON cy1.customer_id = cy2.customer_id 
+        AND cy2.year > cy1.year
+    GROUP BY cy1.customer_id, cy1.year
+)
+
+SELECT 
+    last_active_year + 1 AS churn_year,
+    COUNT(DISTINCT customer_id) AS churned_customers_count,
+    GROUP_CONCAT(DISTINCT customer_id ORDER BY customer_id SEPARATOR ', ') AS churned_customer_ids
+FROM customer_year_pairs
+WHERE next_active_year IS NULL 
+   OR next_active_year > last_active_year + 1
+GROUP BY last_active_year
+ORDER BY churn_year;
+```
 ---
 **-- END OF REPORT --**
 ---
